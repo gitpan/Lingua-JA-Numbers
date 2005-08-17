@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl
 #
-# $Id: 01-RoundTrip.t,v 0.1 2005/08/17 20:11:27 dankogai Exp dankogai $
+# $Id: 01-RoundTrip.t,v 0.1 2005/08/17 20:11:27 dankogai Exp $
 #
 use strict;
 use Encode qw(encode);

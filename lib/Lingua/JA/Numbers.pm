@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = sprintf "%d.%02d", q$Revision: 0.1 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 0.2 $ =~ /(\d+)/g;
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(
@@ -396,7 +396,7 @@ sub _ja2num{
     $ja =~ s{ \+\s*(\)|\z) }{$1}gx;
     # warn $ja;
     my $result = eval qq{ use bignum; $ja };
-    $@ and warn "$ja =>\n $@";
+    $@ and $opt->{debug} and warn "$ja =>\n $@";
     $opt->{debug} and warn qq{_ja2num("$ja") == $result};
     return qq($result);
 }
@@ -412,7 +412,7 @@ Lingua::JA::Numbers - Converts numeric values into their Japanese string equival
 
 =head1 VERSION
 
-$Revision: 0.1 $ $Date: 2005/08/17 20:08:21 $
+$Revision: 0.2 $ $Date: 2005/08/17 20:37:43 $
 
 =head1 SYNOPSIS
 
