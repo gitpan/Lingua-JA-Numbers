@@ -1,0 +1,10 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+lib/Lingua/JA/Numbers.pm
+t/00-Use.t
+t/01-RoundTrip.t 
+t/02-Manman.t
+t/03-OO.t
+META.yml                                 Module meta-data (added by MakeMaker)
