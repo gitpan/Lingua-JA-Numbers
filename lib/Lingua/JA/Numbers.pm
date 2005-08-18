@@ -5,13 +5,13 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = sprintf "%d.%02d", q$Revision: 0.2 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 0.3 $ =~ /(\d+)/g;
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(
 	ja2num num2ja num2ja_ordinal ja_to_number number_to_ja number_to_ja_ordinal
 );
-our %EXPORT_TAGS = ( 'all' => [ @EXPORT ] );
+our %EXPORT_TAGS = ( 'all' => [ @EXPORT, qw(to_string) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 use overload 
@@ -350,6 +350,7 @@ our $RE_Fix_Kana = join("|", keys  %RE_Fix_Kana);
 sub ja2num{
     no warnings 'uninitialized';
     my ($ja, $opt) = @_;
+    $ja or return; # or it croaks under -T @ eval
     $ja =~ s/[\s\x{3000}]//g;
     $ja =~ tr[０-９][0-9];
     $ja =~ tr[ァ-ン][ぁ-ん];
@@ -358,7 +359,7 @@ sub ja2num{
             { "**" . $1 }iegx;
     $ja =~ s{ ($RE_Numerals)  }{ _ja2num($1, $opt) }iegx;	        
     $ja =~ s{ ($RE_Op) }{ $RE_Op{ucfirst $1} }igx;
-    $ja =~ tr[（）＋ー×÷０-９][()\+\-\*];
+    $ja =~ tr[（）＋−×÷][\(\)\+\-\*\/];
     # to be secure;  that way no dangerous ops are passed
     $ja =~ tr/[G-Z]//d; 
     my $result = eval qq{ use bignum; $ja};
@@ -366,6 +367,7 @@ sub ja2num{
     $opt->{debug} and warn qq{ja2num("$ja") == $result};
     return qq($result);
 }
+*ja_to_number = \&ja2num;
 
 sub _ja2num{
     no warnings 'uninitialized';
@@ -400,7 +402,28 @@ sub _ja2num{
     $opt->{debug} and warn qq{_ja2num("$ja") == $result};
     return qq($result);
 }
-*ja_to_number = \&ja2num;
+
+our %RE_TO_STRING_EXCP = (
+    Sanbyaku => 'san-byaku',
+    Roppyaku => 'ro-p-pyaku',
+    Happyaku => 'ha-p-pyaku',
+    Sanzen   => 'san-zen',
+    Hassen   => 'ha-s-sen',
+);
+our $RE_TO_STRING_EXCP = join("|", keys %RE_TO_STRING_EXCP);
+
+sub to_string{
+    my ($str,$opt) = @_;
+    $opt ||= {};
+    $opt->{style} = "romaji";
+    delete $opt->{daiji};
+    delete $opt->{daiji_h};
+    my $ja = __PACKAGE__->new($str, $opt);
+    my @words = 
+      map { s/($RE_TO_STRING_EXCP)/$RE_TO_STRING_EXCP{$1}/i; lc $_ }
+          ($ja->get_string =~ /([A-Z][a-z]*)/g);
+    return @words;
+}
 
 1;
 __END__
@@ -412,14 +435,14 @@ Lingua::JA::Numbers - Converts numeric values into their Japanese string equival
 
 =head1 VERSION
 
-$Revision: 0.2 $ $Date: 2005/08/17 20:37:43 $
+$Revision: 0.3 $ $Date: 2005/08/18 07:16:13 $
 
 =head1 SYNOPSIS
 
   use Lingua::JA::Numbers;
 
   # OO Style
-  my $ja = Linuga::JA::Numbers->new(1234567890, {style=>'romaji'});
+  my $ja = Lingua::JA::Numbers->new(1234567890, {style=>'romaji'});
   # JuuNiOkuSanzenYonHyakuGoJuuRokuManNanaSenHappyakuKyuuJuu
   # $ja->get_string is implictly called
   print "$ja\n"; 
@@ -443,7 +466,7 @@ To install this module type the following:
    make
    make test
    make install
-   
+
 =head1 DEPENDENCIES
 
 This module requires perl 5.8.1 or better.  It also uses L<bignum> internally (that comes with perl core).
@@ -457,7 +480,7 @@ This module converts Japanese text in UTF-8 (or romaji in ascii) to number, AND 
 
 =head2 CAVEAT
 
-DO NOT BE CONFUSED WITH L<Lingua::JA::Number> by Mike Schilli.  This module is far more comprehensive.
+DO NOT BE CONFUSED WITH L<Lingua::JA::Number> by Mike Schilli.  This module is far more comprehensive.  As of 0.03, it even does its to_string() upon request.
 
 =head2 METHODS
 
@@ -581,6 +604,14 @@ ja2num() acts like a calculator -- the easiest way to support scientific notatio
 
   ja2num("6.0225Kakeru10No23Jou")
 
+=head2 to_string() of Lingua::JA::Number
+
+Though not exported by default, This module comes with to_string()
+that is (upper-)compatibile with L<Lingua::JA::Number>.
+
+ my @words = Lingua::JA::Numbers::to_string(1234);
+ print join('-', @words), "\n";   
+ # "sen-ni-hyaku-san-ju-yon"
 
 =head2 EXPORT
 

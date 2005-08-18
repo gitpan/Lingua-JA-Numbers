@@ -3,13 +3,13 @@ NAME
     equivalents and vice versa
 
 VERSION
-    $Revision: 0.1 $ $Date: 2005/08/17 20:08:21 $
+    $Revision: 0.3 $ $Date: 2005/08/18 07:16:13 $
 
 SYNOPSIS
       use Lingua::JA::Numbers;
 
       # OO Style
-      my $ja = Linuga::JA::Numbers->new(1234567890, {style=>'romaji'});
+      my $ja = Lingua::JA::Numbers->new(1234567890, {style=>'romaji'});
       # JuuNiOkuSanzenYonHyakuGoJuuRokuManNanaSenHappyakuKyuuJuu
       # $ja->get_string is implictly called
       print "$ja\n"; 
@@ -32,7 +32,7 @@ INSTALLATION
        make
        make test
        make install
-   
+
 DEPENDENCIES
     This module requires perl 5.8.1 or better. It also uses bignum
     internally (that comes with perl core).
@@ -48,7 +48,8 @@ DESCRIPTION
 
   CAVEAT
     DO NOT BE CONFUSED WITH Lingua::JA::Number by Mike Schilli. This module
-    is far more comprehensive.
+    is far more comprehensive. As of 0.03, it even does its to_string() upon
+    request.
 
   METHODS
     This module supports the following methods. They are compliant with
@@ -149,6 +150,14 @@ DESCRIPTION
     notation was just that. Try
 
       ja2num("6.0225Kakeru10No23Jou")
+
+  to_string() of Lingua::JA::Number
+    Though not exported by default, This module comes with to_string() that
+    is (upper-)compatibile with Lingua::JA::Number.
+
+     my @words = Lingua::JA::Numbers::to_string(1234);
+     print join('-', @words), "\n";   
+     # "sen-ni-hyaku-san-ju-yon"
 
   EXPORT
     ja2num(), num2ja(), num2ja_ordinal(), ja_to_number(), number_to_ja(),
