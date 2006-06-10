@@ -1,6 +1,6 @@
 ﻿#!/usr/local/bin/perl
 #
-# $Id: 03-OO.t,v 0.1 2005/08/17 20:11:27 dankogai Exp $
+# $Id: 03-OO.t,v 0.2 2006/06/10 16:10:39 dankogai Exp dankogai $
 #
 use strict;
 use utf8;
@@ -16,9 +16,9 @@ is(qq($ja), "JuuNiOkuSanzenYonHyakuGoJuuRokuManNanaSenHappyakuKyuuJuu",
 $ja->opt(style => "kanji");
 is(qq($ja), '十二億三千四百五十六万七千八百九十', '"$ja" eq <<Kanji>>');
 $ja->opt(daiji => 1);
-is(qq($ja), '拾弐億参阡四佰伍拾六万七阡八佰九拾', '"$ja" eq <<Daiji>>'); 
+is(qq($ja), '拾弐億参阡四佰伍拾六萬七阡八佰九拾', '"$ja" eq <<Daiji>>'); 
 $ja->opt(daiji => 2);
-is(qq($ja), '拾弐億参阡肆佰伍拾陸万漆阡捌佰玖拾', '"$ja" eq <<Daiji_H>>');
+is(qq($ja), '拾弐億参阡肆佰伍拾陸萬漆阡捌佰玖拾', '"$ja" eq <<Daiji_H>>');
 $ja->opt(daiji => 0, with_arabic=>1);
 is(qq($ja), '12億3456万7890', '"$ja" eq <<with_arabic>>');
 $ja->parse("8623", {style=>"kanji"});

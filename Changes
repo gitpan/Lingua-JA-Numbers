@@ -1,8 +1,19 @@
 # Revision history for Perl extension Lingua::JA::Numbers.
 #
-# $Id: Changes,v 0.3 2005/08/18 07:16:13 dankogai Exp dankogai $
+# $Id: Changes,v 0.4 2006/06/10 16:10:39 dankogai Exp dankogai $
 #
-$Revision: 0.3 $ $Date: 2005/08/18 07:16:13 $
+$Revision: 0.4 $ $Date: 2006/06/10 16:10:39 $
+! lib/Lingua/JA/Numbers.pm
+! t/03-OO.t
++ t/Bullock.t
+  Lots of bug fixes and suggestions by Ben Bullock
+  - Lingua::JA::Numbers->new() did not handle 0.01 correctly
+  - daiji of man
+  - {style => 'daiji'}
+  Message-Id: <bea59c750606082154r5bedc93ci5fd91f5792cb030e@mail.gmail.com>
+  Message-Id: <bea59c750606092223j4c6c7d7q43021dd304eaac62@mail.gmail.com>
+
+0.3 2005/08/18 07:16:13
 + t/LJN.t MANIFEST
   Now does what Lingua::JA::Number (note no 's' at the end) does
   EXACTLY as it does.

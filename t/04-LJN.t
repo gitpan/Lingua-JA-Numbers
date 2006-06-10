@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl
 #
-# $Id: 04-LJN.t,v 0.3 2005/08/18 07:16:13 dankogai Exp dankogai $
+# $Id: 04-LJN.t,v 0.3 2005/08/18 07:16:13 dankogai Exp $
 #
 use strict;
 use Test::More tests => 7;

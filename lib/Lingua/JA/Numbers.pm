@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = sprintf "%d.%02d", q$Revision: 0.3 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 0.4 $ =~ /(\d+)/g;
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(
@@ -58,18 +58,21 @@ sub ordinal { num2ja_ordinal($_[0]->{val}, $_[0]->{opt}) };
 
 our $Zero = {
 	kanji    => '零',
+	daiji    => '零',
 	romaji   => 'Zero',
 	katakana => 'ゼロ',
 	hiragana => 'ぜろ',
 };
 our $Point = {
 	kanji    => '点',
+	daiji    => '点',
 	romaji   => 'Ten',
 	katakana => 'テン',
 	hiragana => 'てん',
 };
 our $Sign = {
 	kanji     =>  {'+' => q(), '-' => '−'},
+	daiji     =>  {'+' => q(), '-' => '−'},
 	romaji    =>  {'+' => '+', '-' => '-'},
 	katakana  =>  {'+' => 'プラス', '-' => 'マイナス'},
     hiragana  =>  {'+' => 'ぷらす', '-' => 'まいなす'},
@@ -91,6 +94,7 @@ our $Ten2Thou = {
 };
 our $Hugenums = {
     kanji    => [qw(極 恒河沙 阿僧祇 那由他 不可思議 無量大数)],  # manman-shin
+    daiji    => [qw(極 恒河沙 阿僧祇 那由他 不可思議 無量大数)],  # manman-shin
     romaji   => [qw(Goku Kougasha Asougi Nayuta Fukashigi Muryoutaisuu) ],
     katakana => [qw(ゴク コウガシャ アソウギ ナユタ フカシギ ムリョウタイスウ)],
     hiragana => [qw(ごく こうがしゃ あそうぎ なゆた ふかしぎ むりょうたいすう)],
@@ -99,7 +103,7 @@ our $Hugenums = {
 our $Suffices = {
 	kanji    => [q(), qw(万 億 兆 京 垓 禾予 穣 溝 澗 正 載), 
 	             @{ $Hugenums->{kanji} }],
-	daiji    => [q(), qw(万 億 兆 京 垓 禾予 穣 溝 澗 正 載), 
+	daiji    => [q(), qw(萬 億 兆 京 垓 禾予 穣 溝 澗 正 載), 
 	             @{ $Hugenums->{kanji} }],
 	romaji   => [q(), qw(Man Oku Chou Kei Gai Jo Jou Kou Kan Sei Sai Goku),
 	             @{ $Hugenums->{romaji} }],
@@ -350,6 +354,11 @@ our $RE_Fix_Kana = join("|", keys  %RE_Fix_Kana);
 sub ja2num{
     no warnings 'uninitialized';
     my ($ja, $opt) = @_;
+    {   # dirty hack;
+        no warnings 'numeric';
+        my $num = $ja + 0;
+        return $num if $num;
+    }
     $ja or return; # or it croaks under -T @ eval
     $ja =~ s/[\s\x{3000}]//g;
     $ja =~ tr[０-９][0-9];
@@ -435,7 +444,7 @@ Lingua::JA::Numbers - Converts numeric values into their Japanese string equival
 
 =head1 VERSION
 
-$Revision: 0.3 $ $Date: 2005/08/18 07:16:13 $
+$Revision: 0.4 $ $Date: 2006/06/10 16:10:39 $
 
 =head1 SYNOPSIS
 
@@ -509,7 +518,7 @@ Stringifies the object accordingly to the options.  The object auto-stringifies 
 =item -E<gt>as_number
 =item -E<gt>numify
 
-Numifies the object. The object auto-numifies via L<overload> so you don't usally need this.
+Numifies the object. The object auto-numifies via L<overload> so you don't usally need this UNLESS YOU USE THIS MODULE with L<bignum>.  See L</bignum vs. Lingua::JA::Numbers> below.
 
 =back
 
@@ -624,7 +633,12 @@ ja2num(), num2ja(), num2ja_ordinal(), ja_to_number(), number_to_ja(), number_to_
 =item bignum vs. Lingua::JA::Numbers
 
 Because of L<overload>, The OO approach does not go well with L<bignum>,
-despite the fact this module uses it internally
+despite the fact this module uses it internally.
+
+  use bignum;
+  $j = Lingua::JA::Numbers->new("SanTenIchiYon");
+  $b = 1 + $ja          # bang! does not work;
+  $b = 1 + $ja->numify; # OK
 
 =item Jo, or 10**24
 
